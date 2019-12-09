@@ -6,9 +6,13 @@ Sub VBA_HW():
         Dim lastRow As Long
         Dim printRow As Double
         Dim currenitVol As Double
-        Dim yearOpenPrice As Long
-        Dim yearEndPrice As Long
-        Dim yearChange As Long
+        Dim yearOpenPrice As Double
+        Dim yearEndPrice As Double
+        Dim yearChange As Double
+        Dim greatestIncrease As Double
+        Dim greatestDecrease As Double
+        Dim mostVolume As Double
+
         'find last occupied row in active sheet, set stock vol to 0 and printrow to row 2
         lastRow = current.Cells(Rows.Count, 2).End(xlUp).Row
         currentVol = 0 
@@ -62,5 +66,42 @@ Sub VBA_HW():
                 printRow = printRow + 1
             End If
         Next i
+
+        'Final rundown stats for greatest % increase/decrease and greatest volume
+        'print labels for final rundown and set the ticker value to the first entry in the year end stats table
+        current.Cells(2, 14).Value = "Greatest % Increase"
+        current.Cells(3, 14).Value = "Greatest % Decrease"
+        current.Cells(4, 14).Value = "Greatest Total Volume"
+        current.Cells(1, 15).Value = "Stock"
+        current.Cells(1, 16).Value = "Value"
+        greatestDecrease = current.Cells(2,11).Value
+        greatestIncrease = current.Cells(2,11).Value
+        mostVolume = current.Cells(2,12).Value
+        
+        'Loop through each row to check if it has the highest increase/decrease/volume so far
+        For ticker = 2 To printRow-1
+            'Check if this stock has the greatest % increase
+            If current.Cells(ticker, 11) > greatestIncrease Then
+                current.Cells(2, 15).Value = current.Cells(ticker, 9)
+                greatestIncrease = current.Cells(ticker, 11)
+                current.Cells(2, 16).Value = greatestIncrease
+            End If
+
+            'Check if this stock has the greatest % decrease
+            If current.Cells(ticker, 11) < greatestDecrease Then
+                current.Cells(3, 15).Value = current.Cells(ticker, 9)
+                greatestDecrease = current.Cells(ticker, 11)
+                current.Cells(3, 16).Value = greatestDecrease
+            End If
+
+            'Check if this stock has the most volume
+            If current.Cells(ticker, 12) > mostVolume Then
+                current.Cells(4, 15).Value = current.Cells(ticker, 9)
+                mostVolume = current.Cells(ticker, 12)
+                current.Cells(4, 16).Value = mostVolume
+            End If
+
+        Next ticker
+
     Next current
 End Sub
